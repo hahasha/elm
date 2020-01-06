@@ -1,7 +1,12 @@
 const appData = require('./data.json')
+const path = require('path')
 const seller = appData.seller
 const goods = appData.goods
 const ratings = appData.ratings
+
+function resolve(dir){
+  return path.join(__dirname, dir)
+}
 
 module.exports = {
   css: {
@@ -21,6 +26,7 @@ module.exports = {
     }
   },
   devServer: {
+    // api接口mock
     before(app) {
       app.get('/api/seller', function (req, res) {
         res.json({
@@ -41,5 +47,13 @@ module.exports = {
         })
       })
     }
+  },
+  // webpack配置
+  chainWebpack(config) {
+    // 配置目录别名
+    config.resolve.alias
+      .set('components', resolve('src/components'))
+      .set('common', resolve('src/common'))
+      .set('api', resolve('src/api'))
   }
 }
