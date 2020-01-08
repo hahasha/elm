@@ -10,7 +10,7 @@
 <script>
 import VHeader from '@/components/v-header/v-header'
 import Goods from '@/components/goods/goods'
-import Ratings from '@/componnets/ratings/ratings'
+import Ratings from '@/components/ratings/ratings'
 import Seller from '@/components/seller/seller'
 import Tab from '@/components/tab/tab'
 import { getSeller } from '@/api/api'
@@ -24,24 +24,21 @@ export default {
     tabs () {
       return [
         {
-          lable: '商品',
-          value: goods,
+          label: '商品',
           component: Goods,
           data: {
             seller: this.seller
           }
         },
         {
-          lable: '评价',
-          value: ratings,
+          label: '评价',
           component: Ratings,
           data: {
             seller: this.seller
-          },
+          }
         },
         {
-          lable: '商家',
-          value: seller,
+          label: '商家',
           component: Seller,
           data: {
             seller: this.seller
@@ -62,9 +59,6 @@ export default {
   },
   components: {
     VHeader,
-    Goods,
-    Ratings,
-    Seller,
     Tab
   }
 }
