@@ -2,7 +2,7 @@
   <div id="app">
     <v-header :seller="seller"></v-header>
     <div class="tab-wrapper">
-      <tab :tabs="tabs"></tab>
+      <tab :tabs="tabs" :initialIndex=0></tab>
     </div>
   </div>
 </template>
@@ -13,47 +13,41 @@ import Goods from '@/components/goods/goods'
 import Ratings from '@/components/ratings/ratings'
 import Seller from '@/components/seller/seller'
 import Tab from '@/components/tab/tab'
-import { getSeller } from '@/api/api'
+import { getSeller } from '@/api/index'
 export default {
-  data () {
+  data() {
     return {
       seller: {}
     }
   },
   computed: {
-    tabs () {
+    tabs() {
       return [
         {
           label: '商品',
           component: Goods,
-          data: {
-            seller: this.seller
-          }
+          data: this.seller
         },
         {
           label: '评价',
           component: Ratings,
-          data: {
-            seller: this.seller
-          }
+          data: this.seller
         },
         {
           label: '商家',
           component: Seller,
-          data: {
-            seller: this.seller
-          }
+          data: this.seller
         }
       ]
     }
   },
-  created () {
+  created() {
     this._getSeller()
   },
   methods: {
-    _getSeller () {
-      getSeller().then((res) => {
-        this.seller = res
+    _getSeller() {
+      getSeller().then(seller => {
+        this.seller = seller
       })
     }
   },
