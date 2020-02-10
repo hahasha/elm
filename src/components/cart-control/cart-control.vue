@@ -1,49 +1,47 @@
 <template>
-    <div class="cart-control">
-        <transition name="move">
-            <div class="cart-decrease" @click.stop="decrease" v-show="food.count>0">
-                <span class="inner icon-remove_circle_outline"></span>
-            </div>
-        </transition>
-        <div class="cart-count" v-show="food.count>0">{{food.count}}</div>
-        <div class="cart-add icon-add_circle" @click.stop="add"></div>
-    </div>
+  <div class="cartcontrol">
+    <transition name="move">
+      <div class="cart-decrease" v-show="food.count>0" @click.stop="decrease">
+        <span class="inner icon-remove_circle_outline"></span>
+      </div>
+    </transition>
+    <div class="cart-count" v-show="food.count>0">{{food.count}}</div>
+    <div class="cart-add icon-add_circle" @click.stop="add"></div>
+  </div>
 </template>
 
 <script>
-const EVENT_ADD = 'add'
 export default {
   name: 'cart-control',
   props: {
     food: {
       type: Object,
-      default () {
+      default() {
         return {}
       }
     }
   },
   methods: {
-    decrease () {
-      if (this.food.count) {
-        this.food.count--
-      }
-    },
-    add (event) {
-      if (!this.food.count) {
+    add() {
+      if(!this.food.count) {
         this.$set(this.food, 'count', 1)
       } else {
         this.food.count++
       }
-      this.$emit(EVENT_ADD, event.target)
+    },
+    decrease() {
+      if(this.food.count) {
+        this.food.count--
+      }
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-  @import "~@/common/stylus/variable"
+  @import "~common/stylus/variable"
 
-  .cart-control
+  .cartcontrol
     display: flex
     align-items: center
     .cart-decrease

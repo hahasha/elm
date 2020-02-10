@@ -9,6 +9,7 @@ function resolve(dir){
 }
 
 module.exports = {
+  lintOnSave: false,
   css: {
     loaderOptions: {
       stylus: {

@@ -26,17 +26,23 @@ export default {
         {
           label: '商品',
           component: Goods,
-          data: this.seller
+          data: {
+            seller: this.seller
+          }
         },
         {
           label: '评价',
           component: Ratings,
-          data: this.seller
+          data: {
+            seller: this.seller
+          }
         },
         {
           label: '商家',
           component: Seller,
-          data: this.seller
+          data: {
+            seller: this.seller
+          }
         }
       ]
     }
