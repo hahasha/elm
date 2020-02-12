@@ -11,6 +11,7 @@
 </template>
 
 <script>
+const EVENT_ADD = 'add'
 export default {
   name: 'cart-control',
   props: {
@@ -22,12 +23,13 @@ export default {
     }
   },
   methods: {
-    add() {
+    add(event) {
       if(!this.food.count) {
         this.$set(this.food, 'count', 1)
       } else {
         this.food.count++
       }
+      this.$emit(EVENT_ADD, event.target)  // 派发add事件，用于驱动添加购物车的动画
     },
     decrease() {
       if(this.food.count) {

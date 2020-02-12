@@ -7,6 +7,28 @@
         :options="scrollOptions"
         v-if="goods.length"
       >
+        <template slot="bar" slot-scope="props">
+          <cube-scroll-nav-bar
+            direction='vertical'
+            :labels="props.labels"
+            :txts="barTxts"
+            :current="props.current"
+          >
+            <template slot-scope="props">
+              <div class="text">
+                <support-ico
+                  v-if="props.txt.type>=1"
+                  :size="3"
+                  :type="props.txt.type"
+                ></support-ico>
+                <span>{{props.txt.name}}</span>
+                <span class="num" v-if="props.txt.count">
+                  <bubble :num="props.txt.count"></bubble>
+                </span>
+              </div>
+            </template>
+          </cube-scroll-nav-bar>
+        </template>
         <cube-scroll-nav-panel
           v-for="good in goods"
           :key="good.name"
@@ -33,7 +55,7 @@
                   <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
                 <div class="cart-control-wrapper">
-                  <cart-control :food="food"></cart-control>
+                  <cart-control :food="food" @add="onAdd"></cart-control>
                 </div>
               </div>
             </li>
@@ -43,6 +65,7 @@
     </div>
     <div class="shop-cart-wrapper">
       <shop-cart
+        ref="shopCart"
         :selected-foods="selectedFoods"
         :delivery-price="seller.deliveryPrice"
         :min-price="seller.minPrice"
@@ -55,6 +78,8 @@
 import { getGoods } from '@/api/index'
 import shopCart from '@/components/shop-cart/shop-cart'
 import cartControl from '@/components/cart-control/cart-control'
+import supportIco from '@/components/support-ico/support-ico'
+import Bubble from '@/components/bubble/bubble'
 export default {
   name: 'goods',
   data() {
@@ -85,7 +110,6 @@ export default {
     },
     selectedFoods() {
       let foods = []
-      console.log(this.goods)
       if(this.goods instanceof Array) {
         this.goods.forEach((good) => {
           good.foods.forEach((food) => {
@@ -97,17 +121,49 @@ export default {
       }
       return foods
     },
+    /**
+     * barTxts: [
+     *  {
+     *    type: 1,
+     *    name: '',
+     *    count: 0
+     *  }
+     * ]
+     * type(图标)、name(显示的文本内容)、count(该类别下加入购物车的数量)
+     */
+    barTxts() {
+      let ret = []
+      this.goods.forEach(item => {
+        const {type, name, foods} = item
+        let count = 0
+        foods.forEach(food => {
+          count += food.count || 0
+        })
+        ret.push({
+          type,
+          name,
+          count
+        })
+      })
+      return ret
+    }
   },
   methods: {
     fetch() {
       getGoods().then((goods) => {
         this.goods = goods
       })
+    },
+    onAdd(target) {
+      // 驱动shop-cart的drop事件
+      this.$refs.shopCart.drop(target)
     }
   },
   components: {
     shopCart,
-    cartControl
+    cartControl,
+    supportIco,
+    Bubble
   }
 }
 </script>
