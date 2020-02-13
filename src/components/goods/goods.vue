@@ -40,6 +40,7 @@
               v-for="food in good.foods"
               :key="food.name"
               class="food-item"
+              @click="selectFood(food)"
             >
               <div class="icon">
                 <img width="57" height="57" :src="food.icon">
@@ -84,16 +85,12 @@ export default {
   name: 'goods',
   data() {
     return {
-      goods: {
-        type: Array,
-        default() {
-          return []
-        }
-      },
+      goods: [],
       scrollOptions: {
         click: false,
         directionLockThreshold: 0
-      }
+      },
+      selectedFood: {}
     }
   },
   props: {
@@ -150,13 +147,51 @@ export default {
   },
   methods: {
     fetch() {
-      getGoods().then((goods) => {
-        this.goods = goods
-      })
+      if(!this.fetched) {
+        getGoods().then((goods) => {
+          this.goods = goods
+        })
+        this.fetched = true
+      }
     },
     onAdd(target) {
       // 驱动shop-cart的drop事件
       this.$refs.shopCart.drop(target)
+    },
+    selectFood(food) {
+      this.selectedFood = food
+      this._showFood()
+      this._showShopCartSticky()
+    },
+    _showFood() {
+      this.foodComp = this.foodComp || this.$createFood({
+        $props: {
+          food: 'selectedFood'
+        },
+        $events: {
+          leave: () => {
+            this._hideShopCartSticky()
+          },
+          add: (el) => {
+            this.shopCartStickyComp.drop(el)
+          }
+        }
+      })
+      this.foodComp.show()
+    },
+    _showShopCartSticky() {
+      this.shopCartStickyComp = this.shopCartStickyComp || this.$createShopCartSticky({
+        $props: {
+          selectedFoods: 'selectedFoods',
+          deliveryPrice: this.seller.deliveryPrice,
+          minPrice: this.seller.minPrice,
+          fold: true
+        }
+      })
+      this.shopCartStickyComp.show()
+    },
+    _hideShopCartSticky() {
+      this.shopCartStickyComp.hide()
     }
   },
   components: {

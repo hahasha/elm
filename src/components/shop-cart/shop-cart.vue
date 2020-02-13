@@ -15,7 +15,7 @@
           <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
         </div>
         <div class="content-right">
-          <div class="pay" :class="payClass">
+          <div class="pay" :class="payClass" @click="pay">
             {{payDesc}}
           </div>
         </div>
@@ -81,7 +81,7 @@ export default {
       type: Boolean,
       default: true
     },
-    isSticky: {
+    sticky: {
       type: Boolean,
       default: false
     }
@@ -176,7 +176,7 @@ export default {
         this._showShopCartList()
         this._showShopCartSticky()
       } else {
-        this.listFold = true
+        // this.listFold = true
         this._hideShopCartList()
       }
     },
@@ -193,13 +193,16 @@ export default {
           },
           leave: () => {
             this._hideShopCartSticky()
+          },
+          add: (target) => {
+            this.shopCartStickyComp.drop(target)
           }
         }
       })
       this.shopCartListComp.show()
     },
     _hideShopCartList() {
-      const comp = this.isSticky ? this.$parent.list : this.shopCartListComp
+      const comp = this.sticky ? this.$parent.list : this.shopCartListComp
       comp.hide()
     },
     _showShopCartSticky() {
@@ -216,10 +219,30 @@ export default {
     },
     _hideShopCartSticky() {
       this.shopCartStickyComp.hide()
+    },
+    pay(e) {
+      if(this.totalPrice < this.minPrice) {
+        return 
+      }
+      this.$createDialog({
+        title: '支付',
+        content: `您一共需要支付${this.totalPrice}元`
+      }).show()
+      e.stopPropagation()
     }
   },
   components: {
     Bubble
+  },
+  watch: {
+    fold(newVal) {
+      this.listFold = newVal
+    },
+    totalCount(newVal) {
+      if(!this.fold && newVal === 0) {
+        this._hideShopCartList()
+      }
+    }
   }
 }
 </script>

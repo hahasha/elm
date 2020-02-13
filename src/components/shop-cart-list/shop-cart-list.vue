@@ -15,9 +15,9 @@
         <div v-show="visible">
           <div class="list-header">
             <h1 class="title">购物车</h1>
-            <span class="empty">清空</span>
+            <span class="empty" @click="empty">清空</span>
           </div>
-          <cube-scroll class="list-content">
+          <cube-scroll class="list-content" ref="listContent">
             <ul>
               <li
                 class="food"
@@ -29,7 +29,7 @@
                   <span>￥{{food.price*food.count}}</span>
                 </div>
                 <div class="cart-control-wrapper">
-                  <cart-control :food="food"></cart-control>
+                  <cart-control :food="food" @add="onAdd"></cart-control>
                 </div>
               </li>
             </ul>
@@ -42,17 +42,15 @@
 
 <script>
 import cartControl from '@/components/cart-control/cart-control'
+import popupMixins from '@/common/mixins/popup'
 
-const EVENT_HIDE = 'hide'
 const EVENT_LEAVE = 'leave'
+const EVENT_ADD = 'add'
+const EVENT_SHOW = 'show'
 
 export default {
+  mixins: [popupMixins],
   name: 'shop-cart-list',
-  data() {
-    return {
-      visible: false
-    }
-  },
   props: {
     selectedFoods: {
       type: Array,
@@ -61,19 +59,35 @@ export default {
       }
     }
   },
+  created() {
+    this.$on(EVENT_SHOW, () => {
+      this.$nextTick(() => {
+        this.$refs.listContent.refresh()
+      })
+    })
+  },
   methods: {
-    show() {
-      this.visible = true
-    },
-    hide() {
-      this.visible = false
-      this.$emit(EVENT_HIDE)
-    },
     maskClick() {
       this.hide()
     },
     afterLeave() {
       this.$emit(EVENT_LEAVE)
+    },
+    onAdd(target) {
+      this.$emit(EVENT_ADD, target)
+    },
+    empty() {
+      this.$createDialog({
+        type: 'confirm',
+        content: '确定清空购物车吗？',
+        $events: {
+          confirm: () => {
+            this.selectedFoods.forEach(food => {
+              food.count = 0
+            })
+          }
+        }
+      }).show()
     }
   },
   components: {

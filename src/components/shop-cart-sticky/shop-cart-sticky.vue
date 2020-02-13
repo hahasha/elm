@@ -5,7 +5,8 @@
       :deliveryPrice = "deliveryPrice"
       :minPrice = "minPrice"
       :fold = "fold"
-      :isSticky = true
+      :sticky = true
+      ref="shopCart"
     >
     </shop-cart>
   </div>
@@ -13,14 +14,11 @@
 
 <script>
   import ShopCart from 'components/shop-cart/shop-cart'
+  import popupMixins from '@/common/mixins/popup'
 
   export default {
+    mixins: [popupMixins],
     name: 'shop-cart-sticky',
-    data() {
-      return {
-        visible: false
-      }
-    },
     props: {
       selectedFoods: {
         type: Array,
@@ -48,11 +46,8 @@
       }
     },
     methods: {
-      show() {
-        this.visible = true
-      },
-      hide() {
-        this.visible = false
+      drop(target) {
+        this.$refs.shopCart.drop(target)
       }
     },
     components: {
