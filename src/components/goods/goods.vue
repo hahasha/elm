@@ -148,7 +148,9 @@ export default {
   methods: {
     fetch() {
       if(!this.fetched) {
-        getGoods().then((goods) => {
+        getGoods({
+          id: this.seller.id
+        }).then((goods) => {
           this.goods = goods
         })
         this.fetched = true

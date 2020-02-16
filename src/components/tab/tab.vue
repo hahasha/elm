@@ -70,7 +70,10 @@ export default {
   methods: {
     onChange(currentIndex) {
       this.index = currentIndex
-      this.$refs.component[currentIndex].fetch()
+      const instance = this.$refs.component[currentIndex]
+      if(instance && instance.fetch) {
+        instance.fetch()
+      }
     },
     onScroll(pos) {
       const tabBarWidth = this.$refs.tabBar.$el.clientWidth
